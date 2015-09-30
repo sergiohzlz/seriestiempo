@@ -22,15 +22,16 @@ def Hurst( seq , vectoriza=None ):
     Obtiene el exponente de Hurst de alguna secuencia 
     """
     N = len( seq )
-    if vectoriza==None: 
-        X = vectoriza( seq )
-    else:
+    try:
+        X = vectoriza(seq)
+    except:
         X = seq
     mn = X.mean()
     Y = X-mn
     Z = Y.cumsum()
     R,S,E = zeros(Z.size), zeros(Z.size), zeros(Z.size) 
-    for i in range(1,len(Z)+1):
+    Em = zeros(E.size)
+    for i in range(1,len(Z)):
         R[i] = Z[:i].max() - Z[:i].min()
         S[i] = seq[:i].std()
         E[i] = R[i]/S[i]
@@ -38,5 +39,5 @@ def Hurst( seq , vectoriza=None ):
         Em[i] = E[:i].mean()
     lnEm = log(Em[1:])
     lnX = log(range(1,len(Em)))
-    m,b,r,p,s = linregress(lnX,lnEm)
+    m,b,r,p,s = lr(lnX,lnEm)
     return m,r,p
